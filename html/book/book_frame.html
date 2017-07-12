@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/iconfont.css"/>
+		<style>
+			body {
+			}
+			.book-info {
+				position: relative;
+				height: 140px;
+				margin-bottom: 10px;
+			}
+			.img-wrap {
+				width: 100px;
+				height: 140px;
+				overflow: hidden;
+				margin-right: 15px;
+			}
+			.img-wrap img {
+				width: 100px;
+			}
+			.book-title {
+				font-size: 18px;
+				font-weight: 700;
+				color: #333333;
+			}
+			.info {
+				position: absolute;
+				bottom: 0;
+			}
+			.info p {
+				font-size: 14px;
+				color: #888;
+			}
+			.book-inlib {
+				margin: 10px 0;
+			}
+			.book-inlib p {
+				text-indent: 5px;
+				font-size: 14px;
+				color: #333;
+				font-weight: 700;
+				line-height: 24px;
+			}
+			.book-inlib p span {
+				color: #888;
+			}
+			.book-brief {
+				line-height: 20px;
+				font-size: 13px;
+				color: #888;
+				text-indent: 2em;
+			}
+			footer {
+				width: 60px;
+				height: 120px;
+				position: fixed;
+				right: 15px;
+				bottom: 15px;
+				border-radius: 60px;
+				padding-top: 3px;
+			}
+			footer > section {
+				width: 100%;
+				text-align: center;
+				padding: 6px 0 6px 0;
+			}
+			footer > section > .iconfont {
+				font-size: 24px;
+				color: #999;
+			}
+			footer > section > div {
+				font-size: 12px;
+			}
+			footer  .Active .iconfont {
+				color: #666;
+				text-align: center;
+			}
+			footer .Active div {
+				color: #555;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content-middle">
+			<!--书籍详情-->
+			<div class="book-info clearfix">
+				<div class="img-wrap fl">
+					<img src=""/>
+				</div>
+				<div class="fl">
+					<h5 class="book-title"></h5>
+					<div class="info">
+						<p >
+							出版：<span id="publish"></span>
+						</p>
+						<p>
+							作者：<span  id="author"></span>
+						</p>
+						<p >
+							翻译： <span id="translate"></span>
+						</p>
+					</div>
+				</div>
+			</div>
+			<h4 class="public-title">馆藏信息</h4>
+			<!--书在图书馆的详情-->
+			<div class="book-inlib">
+				<p>
+					编号：<span id="code"></span>
+				</p>
+				<p>
+					位置：<span id="local"></span>
+				</p>
+				<p>
+					馆藏：<span id="total"></span>
+				</p>
+				<p>
+					可借：<span id="rest"></span>
+				</p>
+			</div>
+			<h4 class="public-title">书籍简介</h4>
+			<div class="book-brief"></div>
+		</div>
+		<footer>
+			<section class="like" class="Active" tapmode="active" onclick="likebook()">
+				<i class="iconfont">&#xe608;</i>
+				<div>
+					收藏
+				</div>
+			</section>
+			<!--<section class="Active" tapmode="active" >
+			<i class="iconfont">&#xe73b;</i>
+			<div>
+			关注
+			</div>
+			</section>-->
+			<section class="Active" tapmode="active" onclick="borrowbook()">
+				<i class="iconfont">&#xe601;</i>
+				<div>
+					借书
+				</div>
+			</section>
+		</footer>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			showBookInfo();
+		};
+		var isBorrow = 0;
+		var restNums = 0;
+		var bookId2 = 0;
+		var isCollect = 0;
+		var isbnBookname = '';
+		//显示书籍信息
+		function showBookInfo() {
+			var userId = $api.getStorage('userId');
+			var bookname = api.pageParam.bookname;
+			var isbn = api.pageParam.isbn;
+			$.ajax({
+				url : IP + '/bookinfo/queryBookDetail.do',
+				method : 'post',
+				dataType : 'json',
+				data : {
+					bookname : bookname,
+					isbn : isbn,
+					userid : userId
+				},
+				success : function(data) {
+					if (data.flag) {
+						bookId2 = data.objectList[0].id;
+						isCollect = data.objectList[0].collect;
+						if (isCollect) {
+							$('.like i').css('color', '#324A7A');
+						}
+						$('.img-wrap img').attr("src", imgIp + data.objectList[0].pic);
+						$('.book-title').html(data.objectList[0].bookname);
+						isbnBookname = data.objectList[0].bookname;
+						$('.book-brief').html(data.objectList[0].summary);
+						$('#publish').html(data.objectList[0].phname);
+						$('#author').html(data.objectList[0].authorname);
+						$('#translate').html(data.objectList[0].translate);
+						$('#code').html(data.objectList[0].phname);
+						$('#local').html(data.objectList[0].location);
+						$('#total').html(data.objectList[0].num);
+						$('#rest').html(data.objectList[0].noborrownum);
+						isBorrow = data.objectList[0].noborrownum;
+					}
+				},
+				error : function(err) {
+					console.log(JSON.stringify(err))
+				}
+			});
+		}
+
+		//借书
+		function borrowbook() {
+			var userId = $api.getStorage('userId');
+			if (isBorrow) {
+				$.ajax({
+					url : IP + '/borrowinfo/insertBorrowinfo.do',
+					method : 'post',
+					dataType : 'json',
+					data : {
+						userid : userId,
+						bookid : bookId2
+					},
+					success : function(data) {
+						if (data.flag) {
+							Toast('借书成功，快去图书馆取书吧!', 1500);
+							isBorrow = isBorrow - 1;
+							$('#rest').html(isBorrow);
+						}
+					},
+					error : function(err) {
+						console.log(JSON.stringify(err));
+					}
+				});
+			} else {
+				Toast('借书失败，馆藏余量为零!', 1500);
+			}
+		}
+
+		//收藏
+		function likebook() {
+			var userId = $api.getStorage('userId');
+			var bookname = api.pageParam.bookname;
+			if (isCollect) {
+				Toast('你已经收藏啦!', 1500);
+			} else {
+				$.ajax({
+					url : IP + '/collectinfo/insertCollectinfo.do',
+					method : 'post',
+					dataType : 'json',
+					data : {
+						bookname : bookname || isbnBookname,
+						userid : userId
+					},
+					success : function(data) {
+						if (data.flag) {
+							$('.like i').css('color', '#324A7A');
+							Toast('收藏成功!', 1500);
+						}
+					},
+					error : function(err) {
+						console.log(JSON.stringify(err));
+					}
+				});
+			}
+		}
+	</script>
+</html>

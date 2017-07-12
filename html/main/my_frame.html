@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="telephone=no,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/public.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body {
+				width: 100%;
+				background-color: #f0f0f0;
+			}
+			.photo-wrap {
+				width: 70px;
+				height: 70px;
+				border-radius: 50%;
+				border: 1px solid #eee;
+				margin-right: 15px;
+			}
+			.photo-wrap img {
+				width: 70px;
+				height: 70px;
+				border-radius: 50%;
+			}
+			.my-card {
+				height: 70px;
+			}
+			.my-info {
+				position: relative;
+				height: 70px;
+				width: 66%;
+			}
+			.my-info h4 {
+				font-weight: 700;
+				font-size: 16px;
+				color: #555;
+			}
+			.my-info  p {
+				color: #888;
+				font-size: 12px;
+				line-height: 20px;
+			}
+			.my-info-text {
+				position: absolute;
+				bottom: 0;
+			}
+			.icon {
+				width: 45px;
+				height: 45px;
+			}
+			.aui-list-item {
+				height: 54px;
+				position: relative;
+			}
+			.aui-list-item .icon {
+				width: 30px;
+				height: 30px;
+			}
+			.aui-list-item  .iconfont {
+				position: absolute;
+				right: 15px;
+				line-height: 50px;
+				color: #ccc;
+			}
+			.aui-list {
+				border: none;
+			}
+			.my-card i {
+				position: absolute;
+				line-height: 70px;
+				right: 15px;
+				color: #ccc;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content-middle">
+			<div class="my-card clearfix">
+				<i class="iconfont">&#xe61b;</i>
+				<div class="photo-wrap fl">
+					<img src="" />
+					<div></div>
+				</div>
+				<div class="my-info fl">
+					<h4></h4>
+					<div class="my-info-text">
+						<p>
+							学号: <span></span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="aui-content aui-margin-b-15" style="margin-top: 20px">
+			<ul class="aui-list aui-list-in">
+				<li class="aui-list-item" onclick="fnSwitchFrame(0)">
+					<div class="aui-list-item-label-icon">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-liebiao"></use>
+						</svg>
+					</div>
+					<div class="aui-list-item-inner">
+						个人信息
+					</div>
+					<i class="iconfont">&#xe61b;</i>
+				</li>
+				<li class="aui-list-item"  onclick="fnSwitchFrame(1)">
+					<div class="aui-list-item-label-icon">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-shezhi3"></use>
+						</svg>
+					</div>
+					<div class="aui-list-item-inner">
+						设置
+					</div>
+					<i class="iconfont">&#xe61b;</i>
+				</li>
+				<!--<li class="aui-list-item"  onclick="fnSwitchFrame(2)">
+				<div class="aui-list-item-label-icon">
+				<svg class="icon" aria-hidden="true">
+				<use xlink:href="#icon-xiaoxiliaotian"></use>
+				</svg>
+				</div>
+				<div class="aui-list-item-inner">
+				通知
+				</div>
+				<i class="iconfont">&#xe61b;</i>
+				</li>-->
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="http://at.alicdn.com/t/font_efh1fr0lf9psc3di.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		function fnSwitchFrame(index_) {
+			var frameNames = ['person', 'setting', 'message'];
+			var pathUrl = '../my/' + frameNames[index_] + '.html';
+			api.openWin({
+				name : frameNames[index_],
+				url : pathUrl,
+				bounces : false,
+				slidBackEnabled : false,
+			});
+		}
+
+		function refreshUserInfo() {
+			var userId = $api.getStorage('userId');
+			$.ajax({
+				url : IP + '/userinfo/queryUserinfo.do',
+				method : 'post',
+				dataType : 'json',
+				data : {
+					id : userId
+				},
+				success : function(data) {
+					if (data.flag == 1) {
+						if (data.objectList[0].gender == 0) {
+							$('.photo-wrap img').attr('src', '../../image/boy.png');
+						} else if (data.objectList[0].gender == 1) {
+							$('.photo-wrap img').attr('src', '../../image/girl.png');
+						}
+						$('.my-info p span').html(data.objectList[0].numberid);
+						$('.my-info h4').html(data.objectList[0].username);
+					}
+				}
+			})
+		}
+
+		apiready = function() {
+		api.addEventListener({
+				name : 'person_back'
+			}, function(ret) {
+				if (ret && ret.value) {
+//					$('.my-info').show();
+					refreshUserInfo();
+//					$('.otherinfo').hide();
+				}
+			});
+			refreshUserInfo();
+			
+		}
+		$('.my-card').click(function() {
+			api.openWin({
+				name : 'login',
+				url : '../login/login.html',
+				bounces : false,
+				slidBackEnabled : false,
+			});
+		})
+	</script>
+</html>

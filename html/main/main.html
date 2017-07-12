@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="telephone=no,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>Hello APP</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/public.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/iconfont.css" />
+		<style>
+			html, body {
+				height: 100%;
+			}
+			body {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-orient: vertical;
+				-webkit-flex-flow: column;
+				flex-flow: column;
+			}
+			section {
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+			}
+			footer {
+				width: 100%;
+				height: 60px;
+				background-color: rgb(250, 250, 250);
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				position: fixed;
+				bottom: 0;
+			}
+			footer > section {
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+				width: 100%;
+				text-align: center;
+				padding: 6px 0 6px 0;
+			}
+			footer > section > .iconfont {
+				font-size: 24px;
+				color: #81A9C3;
+			}
+			footer > section > div {
+				font-size: 12px;
+				color: #81A9C3;
+				/* color: rgb(165, 165, 165);*/
+			}
+			footer  .Active .iconfont {
+				color: #324A7A;
+				text-align: center;
+			}
+			footer .Active div {
+				color: #324A7A;
+				text-align: center;
+			}
+			.header-item {
+				display: none;
+			}
+			.header-item-act {
+				display: block;
+			}
+			header > .header-item {
+				position: relative;
+				background-color: #FFFFFF;
+				height: 50px;
+				border-bottom: 1px solid #eee;
+			}
+			header > .header-item  .header-item-wrap {
+				color: #324a7a;
+				font-size: 20px;
+				text-align: center;
+				line-height: 50px;
+			}
+			#search-con {
+				width: 70%;
+				height: 30px;
+				margin-top: 3px;
+				background: #f3f3f3;
+				border-radius: 36px;
+				border: 1px solid #EEEEEE;
+				color: #777;
+				margin-top: 6px;
+				line-height: 30px;
+				font-size: 16px;
+				font-weight: 300;
+				margin-left: 15%;
+				position: relative;
+				top: 5px;
+			}
+			input::-webkit-input-placeholder {
+				color: #888;
+				font-size: 14px;
+			}
+			#search-con input {
+				width: 100%;
+				height: 100%;
+				line-height: 26px;
+				text-indent: 40px;
+				color: #333;
+				font-size: 14px;
+			}
+			.icon {
+				width: 25px;
+				height: 25px;
+			}
+			#search-con .icon {
+				width: 16px;
+				height: 16px;
+				position: absolute;
+				bottom: 6px;
+				left: 10px;
+			}
+			.search-btn {
+				font-size: 14px;
+				color: #324A7A;
+				position: absolute;
+				right: 15px;
+				bottom: -3px;
+			}
+			.iconActive {
+				display: none;
+			}
+			.sys {
+				position: absolute;
+				left: 15px;
+				font-size: 30px;
+				bottom: -2px;
+				color: #426E95;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="header-item header-item-act" id="home">
+				<div class="header-item-wrap">
+					主页
+				</div>
+			</div>
+			<div class="header-item" id="search">
+				<div  class="header-item-wrap">
+					<i onclick="Scanner()" class="iconfont sys">&#xe617;</i>
+					<div id="search-con">
+						<input id="searchKey"  type="text" placeholder="请输入书名"/>
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-sousuo-copy-copy"></use>
+						</svg>
+					</div>
+					<span class="search-btn" onclick="doSearch()">搜索</span>
+				</div>
+			</div>
+			<div class="header-item" id="my">
+				<div  class="header-item-wrap">
+					我的
+				</div>
+			</div>
+		</header>
+		<section></section>
+		<footer>
+			<section class="Active" tapmode="active" onclick="fnSwitchFrame(0);">
+				<i class="iconfont">&#xe73b;</i>
+				<div>
+					首页
+				</div>
+			</section>
+			<section tapmode="active" onclick="fnSwitchFrame(1);">
+				<i class="iconfont">&#xe739;</i>
+				<div>
+					找找看
+				</div>
+			</section>
+			<section tapmode="active" onclick="fnSwitchFrame(2);">
+				<i class="iconfont">&#xe73d;</i>
+				<div>
+					我的
+				</div>
+			</section>
+		</footer>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="http://at.alicdn.com/t/font_vazmtm1tocsug14i.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		var frameNames = ['home', 'search', 'my'];
+		var headerH;
+		var footerH;
+		function fnSwitchFrame(index_) {
+			// for header switch
+			var header = $api.dom('header');
+			var headerItems = $api.domAll(header, '.header-item');
+			for (var i = 0; i < headerItems.length; i++) {
+				$api.removeCls(headerItems[i], 'header-item-act');
+			};
+			$api.addCls(headerItems[index_], 'header-item-act');
+			// for footer sections
+			var footer = $api.dom('footer');
+			var footerSections = $api.domAll(footer, 'section');
+			for (var i = 0; i < footerSections.length; i++) {
+				$api.removeCls(footerSections[i], 'Active');
+			}
+			$api.addCls(footerSections[index_], 'Active');
+			// for frame switch
+			for (var i = 0; i < frameNames.length; i++) {
+				api.setFrameAttr({
+					name : frameNames[i] + '_frame',
+					hidden : true
+				});
+			};
+			var frameHeaderH = headerH;
+			api.openFrame({
+				name : frameNames[index_] + '_frame',
+				url : frameNames[index_] + '_frame.html',
+				bounces : false,
+				//				reload : true,
+				rect : {
+					x : 0,
+					y : frameHeaderH,
+					w : 'auto',
+					h : api.frameHeight - frameHeaderH - footerH
+				},
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : false
+			});
+		}
+
+		function doSearch() {
+			var searchKey = $('#searchKey').val();
+			api.openFrame({
+				name : 'search_result_frame',
+				url : '../search_result_frame.html',
+				bounces : false,
+				reload : true,
+				rect : {
+					x : 0,
+					y : headerH,
+					w : 'auto',
+					h : api.frameHeight - headerH - footerH
+				},
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : false,
+				pageParam : {
+					"searchKey" : searchKey,
+				}
+			});
+		}
+
+		function Scanner() {
+			var FNScanner = api.require('FNScanner');
+			FNScanner.openScanner({
+				autorotation : true
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.eventType == 'success') {
+						var isbn = ret.content;
+						if (isbn.length == 13) {
+							api.openWin({
+								name : 'book',
+								url : '../book/book.html',
+								bounces : false,
+								pageParam : {
+									"isbn" : isbn,
+								}
+							});
+						} else {
+							Toast('没有找到任何痕迹', '1000');
+						}
+					}
+				} else {
+					alert(JSON.stringify(err));
+				}
+			});
+		}
+
+		apiready = function() {
+			api.addEventListener({
+				name : 'keyback'
+			}, function(ret, err) {
+				api.closeWidget();
+			});
+			var home = $api.byId('home');
+			var my = $api.byId('my');
+			var search = $api.byId('search');
+			//固定的兼容IOS的处理
+			$api.fixIos7Bar(home);
+			$api.fixIos7Bar(my);
+			$api.fixIos7Bar(search);
+			headerH = $api.offset(home).h;
+			var footer = $api.dom('footer');
+			footerH = $api.offset(footer).h;
+			api.openFrame({
+				name : 'home_frame',
+				url : 'home_frame.html',
+				bounces : false,
+				rect : {
+					x : 0,
+					y : headerH,
+					w : 'auto',
+					h : api.frameHeight - headerH - footerH
+				},
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : false
+			});
+		};
+	</script>
+</html>

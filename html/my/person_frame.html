@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/iconfont.css"/>
+		<style>
+			body, html {
+				background: #F0F0F0;
+				width: 100%;
+				box-sizing: border-box;
+				-moz-box-sizing: border-box; /* Firefox */
+				-webkit-box-sizing: border-box; /* Safari */
+			}
+			ul {
+				width: 100%;
+				background: #fff;
+				box-sizing: border-box;
+				-moz-box-sizing: border-box; /* Firefox */
+				-webkit-box-sizing: border-box; /* Safari */
+			}
+			li {
+				font-size: 16px;
+				color: #666;
+				position: relative;
+				width: 100%;
+				box-sizing: border-box;
+				-moz-box-sizing: border-box; /* Firefox */
+				-webkit-box-sizing: border-box; /* Safari */
+			}
+			.bre-info li {
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.bre-info li span {
+				margin-left: 15px;
+				display: inline-block;
+			}
+			.portrait {
+				width: 100%;
+				height: 80px;
+				line-height: 80px;
+				margin-bottom: 10px;
+			}
+			.portrait span {
+				display: inline-block;
+				margin-left: 15px;
+			}
+			.portrait img {
+				width: 60px;
+				height: 60px;
+				border-radius: 50%;
+				display: inline-block;
+				position: absolute;
+				top: 10px;
+				right: 30px;
+			}
+			.right-icon {
+				position: absolute;
+				right: 10px;
+				color: #aaa;
+			}
+			.bre {
+				height: 50px;
+				line-height: 50px;
+			}
+			.bre input {
+				display: inline-block;
+				position: absolute;
+				right: 30px;
+				line-height: 50px;
+				text-align: right;
+				font-size: 14px;
+				color: #324A7A;
+			}
+			.oneW {
+				height: 80px;
+				margin-top: 10px;
+			}
+			.oneW  .right-icon {
+				position: absolute;
+				top: 50%;
+				margin-top: -9px;
+				right: 10px;
+			}
+			.oneW span {
+				display: block;
+				line-height: 30px;
+				height: 30px;
+			}
+			/*.oneW input {
+			 display: block;
+			 line-height: 30px;
+			 height: 30px;
+			 margin-top:10px;
+			 margin-left: 15px;
+			 }*/
+			#user-tel {
+				text-align: right;
+				display: block;
+				font-size: 14px;
+				color: #324A7A;
+				display: inline-block;
+				position: absolute;
+				right: 20px;
+			}
+			#user-nickname {
+				text-align: right;
+				display: block;
+				font-size: 14px;
+				color: #324A7A;
+				display: inline-block;
+				position: absolute;
+				right: 20px;
+			}
+			#user-sex, #user-col {
+				text-align: right;
+				font-size: 14px;
+				color: #324A7A;
+				display: inline-block;
+				position: absolute;
+				right: 28px;
+			}
+			.change-btn {
+				color: #fff;
+				font-size: 16px;
+				border-radius: 5px;
+				/*border: 1px solid #02BFAD;*/
+				width: 80%;
+				height: 44px;
+				line-height: 44px;
+				background: #02BFAD;
+				margin: 0 auto;
+				text-align: center;
+				margin-top: 30px;
+			}
+			#user-one {
+				width: 80%;
+				display: block;
+				line-height: 30px;
+				height: 30px;
+				padding-top: 10px;
+				padding-left: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<ul>
+			<li class="portrait" >
+				<span>我的头像</span><img id="avatar" src="" />
+			</li>
+		</ul>
+		<ul class="bre-info">
+			<li class="bre">
+				<span>姓名</span>
+				<span class="text" id ='user-nickname'></span>
+			</li>
+			<li class="bre">
+				<span>学号</span>
+				<span class="text" id='user-tel'></span>
+			</li>
+			<li class="bre">
+				<span>性别</span>
+				<span class="text" id = 'user-sex' ></span>
+			</li>
+			<li class="bre">
+				<span>学院</span>
+				<span class="text" id = 'user-col' ></span>
+			</li>
+		</ul>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		function refreshUserInfo() {
+			var userId = $api.getStorage('userId');
+			var $userSex = $('#user-sex');
+			var $userTel = $('#user-tel');
+			var $userImg = $('.portrait img');
+			var $userNickname = $('#user-nickname');
+			$.ajax({
+				url : IP + '/userinfo/queryUserinfo.do',
+				method : 'post',
+				dataType : 'json',
+				data : {
+					id : userId
+				},
+				success : function(data) {
+					if (data.flag == 1) {
+						if (data.objectList[0].gender == 0) {
+							$('#avatar').attr('src', '../../image/boy.png')
+							$userSex.html('男');
+						} else if (data.objectList[0].gender == 1) {
+							$('#avatar').attr('src', '../../image/girl.png')
+							$userSex.html('女');
+						}
+						$userTel.html(data.objectList[0].numberid);
+						$userNickname.html(data.objectList[0].username);
+						$('#user-col').html(data.objectList[0].college)
+					}
+				}
+			})
+		}
+
+		apiready = function() {
+			refreshUserInfo();
+		};
+	</script>
+</html>

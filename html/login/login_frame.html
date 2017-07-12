@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/iconfont.css"/>
+		<style>
+			html, body {
+				width: 100%;
+				background-color: #fff;
+			}
+			input {
+				outline: none;
+				width: 85%;
+				height: 50px;
+				font-size: 12px;
+				color: #333;
+			}
+			input::-webkit-input-placeholder {
+				color: #aaa;
+				font-size: 12px;
+			}
+			form {
+				margin-top: 50px;
+			}
+			form div {
+				width: 85%;
+				height: 40px;
+				margin: 0 auto;
+				border-bottom: 1px solid #81A9C3;
+				margin-bottom: 20px;
+				line-height: 40px;
+			}
+			form div i {
+				color: #FFC852;
+				font-size: 16px;
+			}
+			.login-title {
+				font-weight: 600;
+				font-size: 24px;
+				padding: 10px 0;
+				text-align: left;
+				color: #3c3c3c;
+				width: 85%;
+				text-align: left;
+				margin: 0 auto;
+				margin-top: 15px;
+			}
+			.login-brief {
+				color: #aaa;
+				width: 85%;
+				text-align: left;
+				margin: 0 auto;
+				font-size: 12px;
+			}
+			.login-btn, .create-btn {
+				width: 85%;
+				height: 45px;
+				line-height: 47px;
+				text-align: center;
+				margin: 0 auto;
+				border-radius: 2px;
+				font-size: 16px;
+			}
+			.login-btn {
+				background: #426e95;
+				margin-bottom: 10px;
+				color: #fff;
+				margin-top: 80px;
+			}
+			.create-btn {
+				color: #aaa;
+				border: 1px solid #eee;
+			}
+			.goRegister {
+				width: 85%;
+				margin: 0 auto;
+				color: #426E95;
+				font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="login-card">
+			<form >
+				<div>
+					<i class="iconfont">&#xe689;</i>
+					<input type="text" placeholder="学号" id="telep"/>
+				</div>
+				<div>
+					<i class="iconfont">&#xe636;</i>
+					<input type="password" placeholder="密码" id="passwd"/>
+				</div>
+			</form>
+			<div class="login-btn" tapmode onclick="fnLogin()">
+				登录
+			</div>
+			<!--<p class="goRegister">
+			<span onclick="fnOpenRegisterWin()">去注册</span>
+			</p>-->
+		</div>
+	</body>
+	<script src="../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		$('#telep').blur(function() {
+			if ($('#telep').val().length != 13) {
+				Toast('学号格式不正确', 1000);
+			}
+		});
+		$('#passwd').blur(function() {
+			if ($('#passwd').val() == undefined || $('#passwd').val() == '') {
+				Toast('密码不能为空', 1000);
+			}
+		});
+		//登录
+		function fnLogin() {
+			var $telep = $('#telep').val();
+			var $passwd = $('#passwd').val();
+			$.ajax({
+				url : IP + '/userinfo/verifyLogin.do',
+				method : 'post',
+				dataType : 'json',
+				data : {
+					numberid : $telep,
+					password : $passwd,
+				},
+				success : function(data) {
+					if (data.flag == 1) {
+						Toast('欢迎你,' + data.objectList[0].username + '同学', 2000);
+						$api.setStorage('userId', data.objectList[0].id);
+						api.sendEvent({
+							name : 'person_back',
+							extra : {
+								my : "xue"
+							}
+						});
+						setTimeout(function() {
+							api.openWin({
+								name : 'main',
+								url : '../main/main.html',
+								bounces : false,
+								slidBackEnabled : false,
+							});
+						}, 1000);
+					} else {
+						Toast('账号或密码错误。', 1000);
+					}
+				},
+				error : function(err) {
+					Toast('服务异常，请稍后再试。', 1000);
+					console.log(JSON.stringify(err));
+				}
+			});
+		}
+
+		//打开注册页面
+		function fnOpenRegisterWin() {
+			api.openWin({
+				name : 'register',
+				url : 'register.html',
+				bounces : false,
+				pageParam : {
+				}
+			});
+		}
+
+		apiready = function() {
+		}
+	</script>
+</html>

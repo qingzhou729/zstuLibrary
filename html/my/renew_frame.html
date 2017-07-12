@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<style>
+			body {
+			}
+			li {
+			}
+			.content-middle {
+				padding-top: 0;
+			}
+			.book-info {
+				position: relative;
+				height: 160px;
+				border-bottom: 1px solid #f3f3f3;
+			}
+			.img-wrap {
+				width: 100px;
+				height: 140px;
+				position: relative;
+				overflow: hidden;
+				margin-right: 15px;
+				margin-top: 10px;
+			}
+			.img-wrap img {
+				width: 100px;
+			}
+			.book-title {
+				font-size: 17px;
+				font-weight: 700;
+				color: #333333;
+				margin-top: 10px;
+			}
+			.info {
+				position: absolute;
+				bottom: 10px;
+			}
+			.info p {
+				font-size: 13px;
+				color: #888;
+			}
+			.book-inlib {
+				margin: 10px 0;
+			}
+			.book-inlib p {
+				text-indent: 5px;
+				font-size: 14px;
+				color: #333;
+				font-weight: 700;
+				line-height: 24px;
+			}
+			.book-inlib p span {
+				color: #888;
+			}
+			.book-brief {
+				line-height: 20px;
+				font-size: 13px;
+				color: #888;
+				text-indent: 2em;
+			}
+			.list-book {
+				width: 50%;
+			}
+			.aui-label {
+				position: absolute;
+				right: 0;
+				top: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content-middle">
+			<ul>
+				<!--<li class="clearfix book-info">
+				<div class="aui-label aui-label-success">
+				可借
+				</div>
+				<div class="book-info clearfix">
+				<div class="img-wrap fl">
+				<img src="../image/book/book-2.jpeg"/>
+				</div>
+				<div class="fl list-book">
+				<h5 class="book-title"> 给我一个地球 </h5>
+				<div class="info">
+				<p>
+				出版：清华大学
+				</p>
+				<p>
+				作者：杨晓雪
+				</p>
+				<p>
+				位置：AP-345/90
+				</p>
+				<p>
+				馆藏：1/8本
+				</p>
+				</div>
+				</div>
+				</div>
+				</li>-->
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			showBorrowList();
+		};
+		function showBorrowList() {
+			var userId = api.pageParam.searchKey;
+			var now = getNowFormatDate();
+			var jcsj;
+			$.ajax({
+				url : IP + '/borrowinfo/queryBorrowinfo.do',
+				method : 'post',
+				dataType : 'json',
+				data : {
+					userid : userId,
+					type : '0'
+				},
+				success : function(data) {
+					if (data.flag) {
+						var arr = data.objectList;
+						var html;
+						var back;
+						var tag;
+						if (arr.length) {
+							arr.forEach(function(item) {
+								var nowDate = getNowFormatDate();
+								var endTime = (item.ebackdate).substring(0, 10);
+								if (DateDiff(nowDate, endTime) > 0 && DateDiff(nowDate, endTime) < 7) {
+									tag = '<li onclick=renewBook(' + item.id + ') class="clearfix book-info"><div class="aui-label aui-label-info"  >续借</div>';
+								} else if (DateDiff(nowDate, endTime) <= 0) {
+									tag = '<li onclick="ToastBook()" class="clearfix book-info"><div class="aui-label aui-label-danger">超期</div>';
+								} else {
+									tag = '<li class="clearfix book-info"><div></div>';
+								}
+								html = '<div class="book-info clearfix"><div class="img-wrap fl"><img src="' + imgIp + item.pic + '"/></div>' + '<div class="fl list-book"><h5 class="book-title"> ' + item.bookname + ' </h5><div class="info"> ' + '<p>作者：' + item.authorname + '</p><p>借出时间：' + item.bookdate + '</p><p>预计归还：' + item.ebackdate + '</p>';
+								if (item.backdate == undefined) {
+									back = '<p>归还时间：未归还</p></div></div></div></li>';
+								} else {
+									back = '<p>归还时间：' + item.backdate + '</p></div></div></div></li>';
+								}
+								$('ul').append(tag + html + back);
+							})
+						} else {
+							Toast('没有找到任何痕迹。', 500);
+						}
+					}
+				},
+				error : function(err) {
+					console.log(JSON.stringify(err));
+				}
+			});
+		}
+
+		function renewBook(id) {
+			$.ajax({
+				url : IP + '/borrowinfo/updateBorrowinfo.do',
+				method : 'post',
+				dataType : 'json',
+				data : {
+					id : id,
+					status : 1
+				},
+				success : function(data) {
+					if (data.flag) {
+						Toast('续借成功。', 1000);
+					}
+				},
+				error : function(err) {
+					console.log(JSON.stringify(err));
+				}
+			});
+		}
+
+		function ToastBook() {
+			Toast('超期不能续借，尽快还书吧。', 2000);
+		}
+	</script>
+</html>

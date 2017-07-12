@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="telephone=no,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title>home frame</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body {
+				height: 100%;
+				width: 100%;
+				background-color: #fff;
+			}
+			.aui-col-xs-4 {
+				height: 190px;
+			}
+			.book-img-wrap {
+				height: 140px;
+				overflow: hidden;
+			}
+			.aui-col-xs-4 p {
+				line-height: 30px;
+				font-size: 14px;
+				color: #333;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			.icon {
+				width: 50px;
+				height: 50px;
+			}
+			.content-middle2 {
+				padding: 0px 15px -5px;
+			}
+			.content-middle1 {
+				padding: 0px 15px 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="height:180px;"></div>
+		<div class="content-middle2" >
+			<section class="aui-grid">
+				<div class="aui-row">
+					<div class="aui-col-xs-3"  onclick="fnSwitchFrame(0)">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-shusvg"></use>
+						</svg>
+						<!--<i class="aui-iconfont aui-icon-home"></i>-->
+						<div class="aui-grid-label">
+							书架
+						</div>
+					</div>
+					<div class="aui-col-xs-3" onclick="fnSwitchFrame(1)">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-xinxing"></use>
+						</svg>
+						<!--<i class="aui-iconfont aui-icon-gear"></i>-->
+						<div class="aui-grid-label">
+							收藏
+						</div>
+					</div>
+					<div class="aui-col-xs-3" onclick="fnSwitchFrame(2)">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-shijiansvg"></use>
+						</svg>
+						<!--<i class="aui-iconfont aui-icon-map"></i>-->
+						<div class="aui-grid-label">
+							借阅
+						</div>
+					</div>
+					<div class="aui-col-xs-3" onclick="fnSwitchFrame(3)">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-shaloudengdai"></use>
+						</svg>
+						<!--<i class="aui-iconfont aui-icon-calendar"></i>-->
+						<div class="aui-grid-label">
+							续借
+						</div>
+					</div>
+				</div>
+		</div>
+		<div class="content-middle1">
+			<h4 class="public-title">借阅排行</h4>
+			<div>
+				<div  id="homepageBookinfo" class="aui-row aui-row-padded"></div>
+			</div>
+		</div>
+		<div class="content-middle1">
+			<h4 class="public-title">新书推荐</h4>
+			<div>
+				<div  id="newBookinfo" class="aui-row aui-row-padded"></div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="http://at.alicdn.com/t/font_efh1fr0lf9psc3di.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		function fnSwitchFrame(index_) {
+			var frameNames = ['bookshelf', 'like', 'borrow', 'renew'];
+			var pathUrl = '../my/' + frameNames[index_] + '.html';
+			api.openWin({
+				name : frameNames[index_],
+				url : pathUrl,
+				bounces : false,
+				slidBackEnabled : false,
+			});
+		}
+
+		function showRecommendBooks(type) {
+			$.ajax({
+				url : IP + '/bookinfo/' + type + '.do',
+				method : 'post',
+				dataType : 'json',
+				data : {},
+				success : function(data) {
+					if (data.flag == 1) {
+						var arr = data.objectList;
+						var oneBook;
+						var picUrl;
+						arr.forEach(function(item) {
+							picUrl = imgIp + item.pic;
+							oneBook = '<div class="aui-col-xs-4" onclick=showBookInfo(' + "'" + item.bookname + "'" + "," + "'" + item.id + "'" + ')><div class="book-img-wrap"><img src=' + picUrl + '></div><p>' + item.bookname + '</p></div>';
+							$('#' + type).append(oneBook);
+						})
+					} else {
+						Toast('账号或密码错误。', 1000);
+					}
+				},
+				error : function(err) {
+					Toast('服务异常，请稍后再试。', 1000);
+					console.log(JSON.stringify(err))
+				}
+			});
+		}
+
+		function showFlash() {
+			var UIScrollPicture = api.require('UIScrollPicture');
+			UIScrollPicture.open({
+				rect : {
+					x : 0,
+					y : 0,
+					w : api.winWidth,
+					h : 180
+				},
+				data : {
+					paths : ['widget://image/banner/banner-1.jpeg', 'widget://image/banner/banner-3.jpeg', 'widget://image/banner/banner-4.jpeg'],
+				},
+				styles : {
+					indicator : {
+						align : 'center',
+						color : '#FFFFFF',
+						activeColor : '#4365a0'
+					}
+				},
+				placeholderImg : 'widget://image/banner/banner-1.png',
+				contentMode : 'scaleToFill',
+				interval : 3,
+				fixedOn : api.frameName,
+				loop : true,
+				fixed : false
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.status) {
+						if (ret.eventType == 'click') {
+							var bookNames = ['从你的全世界路过', '解忧杂货店', '你不知道的JavaScript'];
+							api.openWin({
+								name : 'news_info',
+								url : '../book/book.html',
+								bounces : false,
+								pageParam : {
+									"bookName" : bookNames[ret.index]
+								}
+							});
+						}
+					}
+				} else {
+					//alert(JSON.stringify(err));
+				}
+			});
+		}
+
+		function showBookInfo(bookname, bookid) {
+			var bookName = bookname;
+			var bookId = bookid;
+			api.openWin({
+				name : 'book',
+				url : '../book/book.html',
+				bounces : false,
+				pageParam : {
+					"bookName" : bookName,
+					"bookId" : bookId
+				}
+			});
+		}
+
+		apiready = function() {
+			showFlash();
+			showRecommendBooks('homepageBookinfo');
+			showRecommendBooks('newBookinfo');
+		};
+	</script>
+</html>

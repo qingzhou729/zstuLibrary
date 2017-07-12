@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="telephone=no,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+		<style>
+			html, body {
+				width: 100%;
+				background: #f0f0f0;
+				box-sizing: border-box;
+				-moz-box-sizing: border-box; /* Firefox */
+				-webkit-box-sizing: border-box; /* Safari */
+			}
+			.cmnity-items li {
+				box-sizing: border-box;
+				-moz-box-sizing: border-box; /* Firefox */
+				-webkit-box-sizing: border-box; /* Safari */
+				width: 94%;
+				margin: 0 auto;
+				background: #fff;
+				list-style: none;
+				margin-bottom: 10px;
+				margin-top: 10px;
+			}
+			.com-header {
+				line-height: 50px;
+				position: relative;
+			}
+			.com-header .nickName {
+				font-size: 14px;
+				color: #333;
+			}
+			.com-header img {
+				width: 38px;
+				height: 38px;
+				border-radius: 50%;
+				margin: 10px;
+			}
+			.com-time {
+				color: #aaa;
+				font-size: 10px;
+				position: absolute;
+				right: 10px;
+			}
+			.com-content {
+				line-height: 20px;
+				font-size: 15px;
+				color: #111;
+				padding: 10px;
+			}
+			.com-footer {
+				line-height: 40px;
+				position: relative;
+			}
+			.com-footer > div {
+				width: 49%;
+				text-align: center;
+				display: inline-block;
+				color: #aaa;
+			}
+			.shu {
+				width: 1px;
+				display: inline-block;
+				height: 20px;
+				background: #eee;
+				left: 49%;
+				position: absolute;
+				top: 12px;
+			}
+			.com-footer div span {
+				display: inline-block;
+				padding: 0 10px;
+			}
+			.cm {
+				font-size: 20px;
+				position: relative;
+				top: 4px;
+			}
+			.publish-btn {
+				width: 56px;
+				height: 56px;
+				border-radius: 50%;
+				background: #02bfad;
+				position: fixed;
+				bottom: 50px;
+				right: 30px;
+			}
+			.publish-btn i {
+				color: #FFFFFF;
+				font-size: 30px;
+				text-align: center;
+				line-height: 58px;
+				position: relative;
+				left: 13px;
+			}
+			.imgsContent img {
+				width: 25%;
+				height: 80px;
+				margin: 5px 5px 5px 0px;
+				border: 1px solid #eee;
+			}
+			.imgsContent img:nth-child(3n+1) {
+				margin-left: 10px;
+			}
+			.praiseed {
+				color: #02BFAD;
+			}
+			.com-win {
+				width: 100%;
+				height: 400px;
+				position: fixed;
+				top: 0;
+				left: 0;
+				background: #fff;
+				z-index: 100;
+				padding: 0px 15px;
+			}
+			.com-win-bg {
+				width: 100%;
+				height: 100%;
+				z-index: 99;
+				position: fixed;
+				top: 0;
+				/*	background: red;*/
+				background: #f1f1f1;
+				display: none;
+			}
+			.header {
+				height: 60px;
+				line-height: 60px;
+				font-size: 18px;
+				background: #fff;
+				border-bottom: 1px solid #eee;
+				color: #333;
+			}
+			.my-coach-stars {
+				display: inline-block;
+			}
+			.my-coach-stars i {
+				color: #ddd;
+				font-size: 26px;
+				margin: 0 2px;
+			}
+			.content {
+				padding: 15px 0;
+				color: #aaa;
+			}
+			.content textarea {
+				color: #333;
+				height: 100px;
+				width: 90%;
+				font-size: 16px;
+				line-height: 26px;
+			}
+			.btns {
+				position: absolute;
+				right: 35px;
+				bottom: -30px;
+			}
+			.btns span {
+				display: inline-block;
+				height: 60px;
+				width: 60px;
+				border-radius: 50%;
+				margin: 0 10px;
+				text-align: center;
+				font-size: 15px;
+				color: #fff;
+				line-height: 60px;
+			}
+			.btns .cancle-btn {
+				background: #ec5151;
+			}
+			.confirm-btn {
+				background: #02BFAD;
+			}
+			.img-container {
+				display: inline-block;
+			}
+			.img-container .img-con {
+				margin: 3px;
+				width: 80px;
+				height: 80px;
+				border: 1px solid #eee;
+				display: inline-block;
+				border-radius: 3px;
+			}
+			.img-container .img-con img {
+				width: 80px;
+				height: 80px;
+			}
+			.upload-img {
+				width: 80px;
+				height: 80px;
+				border: 1px solid #ddd;
+				border-radius: 3px;
+				position: relative;
+				display: inline-block;
+				margin: 3px;
+			}
+			.upload-img .rol {
+				width: 30px;
+				height: 1px;
+				background: #ddd;
+				margin: 0 auto;
+				margin-top: 40px;
+			}
+			.upload-img .row {
+				width: 1px;
+				height: 30px;
+				background: #ddd;
+				position: absolute;
+				top: 25px;
+				left: 40px;
+			}
+			.bottom-push {
+				width: 100%;
+				height: 60px;
+				line-height: 50px;
+				color: #999;
+				font-size: 13px;
+				text-align: center;
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+	哈哈
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		
+	</script>
+</html>
